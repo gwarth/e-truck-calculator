@@ -96,7 +96,8 @@ function VehicleTimeline({ result }: { result: SimResult }) {
               domain={[0, 100]}
               tick={{ fontSize: 10, fill: '#94a3b8' }}
               tickFormatter={v => `${v}%`}
-              width={30}
+              width={38}
+              ticks={[0, 25, 50, 75, 100]}
             />
             <Tooltip content={<CustomTooltip />} />
             {/* Minimum SOC line */}
@@ -112,7 +113,7 @@ function VehicleTimeline({ result }: { result: SimResult }) {
               />
             ))}
             <Area
-              type="monotone"
+              type="linear"
               dataKey="soc"
               fill="#dbeafe"
               stroke="#3b82f6"

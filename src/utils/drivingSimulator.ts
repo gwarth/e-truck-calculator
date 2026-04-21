@@ -99,19 +99,30 @@ export function simulateTour(truck: ElectricTruckPreset, params: SimParams): Sim
       const timeUntilDestination = (kmRemaining()) / avgSpeedKmh
       const timeUntilBatteryMin = rangeNow / avgSpeedKmh
 
-      driveSegmentH = Math.min(timeUntilBreak, timeUntilDestination, timeUntilBatteryMin)
+      // Lookahead: wenn Batterie-Minimum weniger als 15 min vor der Pflichtpause liegt,
+      // einfach bis zur Pause weiterfahren (realer Fahrer stoppt nicht 8 km vor dem Rastplatz)
+      const LOOKAHEAD_H = 0.25 // 15 Minuten
+      const effectiveBatteryLimit =
+        timeUntilBreak > 0 && timeUntilBatteryMin < timeUntilBreak &&
+        timeUntilBreak - timeUntilBatteryMin < LOOKAHEAD_H
+          ? timeUntilBreak  // zur Pause durchfahren
+          : timeUntilBatteryMin
+
+      driveSegmentH = Math.min(timeUntilBreak, timeUntilDestination, effectiveBatteryLimit)
 
       if (driveSegmentH <= 0.001) {
         if (timeUntilDestination <= 0.001) {
           triggerReason = 'destination'
-        } else if (timeUntilBatteryMin <= 0.001) {
+        } else if (effectiveBatteryLimit <= 0.001) {
           triggerReason = 'battery'
         } else {
           triggerReason = 'break'
         }
       } else if (driveSegmentH >= timeUntilDestination - 0.001) {
         triggerReason = 'destination'
-      } else if (driveSegmentH >= timeUntilBatteryMin - 0.001) {
+      } else if (driveSegmentH >= timeUntilBreak - 0.001 && timeUntilBreak <= effectiveBatteryLimit) {
+        triggerReason = 'break'
+      } else if (driveSegmentH >= effectiveBatteryLimit - 0.001) {
         triggerReason = 'battery'
       } else {
         triggerReason = 'break'
