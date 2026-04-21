@@ -11,9 +11,15 @@ export const ELECTRIC_PRESETS: ElectricTruckPreset[] = [
     consumptionPer100km: 114,         // Realdaten: 3.091 kWh / 2.708 km (Tobias Wagner)
     batteryCapacityKwh: 540,
     batteryUsableKwh: 486,            // 90 % nutzbar
-    maxChargingKw: 350,               // CCS2
+    maxChargingKw: 350,               // CCS2 peak
     chargingStandard: 'CCS2',
     rangeKm: 426,                     // 486 kWh / 1.14 kWh/km
+    // Ladekurve: Peak 320 kW, nach ~10 min Abfall auf 265 kW ab ~50% SOC
+    chargingCurve: [
+      { untilSocPct: 50, powerKw: 320 },
+      { untilSocPct: 80, powerKw: 265 },
+      { untilSocPct: 90, powerKw: 180 },
+    ],
   },
   {
     id: 'mercedes-eactros-600',
@@ -26,6 +32,11 @@ export const ELECTRIC_PRESETS: ElectricTruckPreset[] = [
     maxChargingKw: 1_000,             // MCS (Megawatt Charging System)
     chargingStandard: 'MCS',
     rangeKm: 414,
+    // MCS: sehr flache Kurve bis ~80%, dann Abfall
+    chargingCurve: [
+      { untilSocPct: 80, powerKw: 900 },
+      { untilSocPct: 90, powerKw: 500 },
+    ],
   },
   {
     id: 'volvo-fh-electric',
@@ -38,6 +49,11 @@ export const ELECTRIC_PRESETS: ElectricTruckPreset[] = [
     maxChargingKw: 250,               // CCS2
     chargingStandard: 'CCS2',
     rangeKm: 324,
+    chargingCurve: [
+      { untilSocPct: 70, powerKw: 250 },
+      { untilSocPct: 85, powerKw: 180 },
+      { untilSocPct: 90, powerKw: 120 },
+    ],
   },
 ]
 
@@ -73,73 +89,58 @@ export const DIESEL_PRESETS: DieselTruckPreset[] = [
 // ─── Default Inputs ──────────────────────────────────────────────────────────
 
 export const DEFAULT_INPUTS: TCOInputs = {
-  // Vehicle selection
   electricVehicleId: 'daf-xf-electric',
   dieselVehicleId: 'daf-xg-480',
 
-  // Financing
   financingMode: 'leasing',
 
-  // Electric vehicle finances
   electricPurchasePrice: 390_000,
-  electricSubsidy: 40_000,           // typische Bundesförderung DE 2024/25
-  electricLeasingRateMonthly: 4_200, // ca. Full-Service-Leasing 5 Jahre
+  electricSubsidy: 40_000,
+  electricLeasingRateMonthly: 4_200,
   electricLeasingDownpayment: 50_000,
   electricResidualValuePct: 25,
 
-  // Diesel vehicle finances
   dieselPurchasePrice: 160_000,
   dieselSubsidy: 0,
   dieselLeasingRateMonthly: 1_900,
   dieselLeasingDownpayment: 20_000,
   dieselResidualValuePct: 30,
 
-  // Financing rate
   financingRatePct: 4.5,
 
-  // Technical (mirrors preset defaults, overridable)
   electricConsumptionPer100km: 114,
   dieselConsumptionPer100km: 26.8,
 
-  // Usage profile
   kmPerYear: 120_000,
   depotChargingSharePct: 80,
 
-  // Energy costs
   depotElectricityPrice: 0.22,
   publicElectricityPrice: 0.55,
   dieselPrice: 1.70,
 
-  // OPEX per km
-  electricMaintenancePerKm: 0.05,    // ~50 % günstiger als Diesel (ACEA)
-  dieselMaintenancePerKm: 0.10,      // BGL-Richtwert 40t
-  electricTiresCostPerKm: 0.04,      // höherer Reifenverschleiß durch Gewicht
+  electricMaintenancePerKm: 0.05,
+  dieselMaintenancePerKm: 0.10,
+  electricTiresCostPerKm: 0.04,
   dieselTiresCostPerKm: 0.04,
 
-  // OPEX annual fixed
   electricInsurancePerYear: 8_500,
   dieselInsurancePerYear: 7_500,
-  electricTaxPerYear: 0,             // eLKW in DE steuerfrei
-  dieselTaxPerYear: 900,             // ca. Kfz-Steuer 40t
+  electricTaxPerYear: 0,
+  dieselTaxPerYear: 900,
 
-  // Maut (Stand 2026: eLKW zahlt Infrastrukturanteil, kein CO₂-Zuschlag)
   electricTollPerKm: 0.08,
-  dieselTollPerKm: 0.274,            // inkl. CO₂-Zuschlag seit Dez. 2023
+  dieselTollPerKm: 0.274,
 
-  // Infrastructure
-  depotChargingCapex: 80_000,        // 150kW DC Wallbox + Netzanschluss
+  depotChargingCapex: 80_000,
   depotChargingLifeYears: 10,
 
-  // Financial model
   timeHorizonYears: 5,
   discountRatePct: 5,
 
-  // Fuel surcharge
   fuelSurchargeEnabled: true,
   fuelSurchargeBaseDieselPrice: 1.20,
   fuelSurchargePassthroughPct: 70,
 
-  // Driving simulation
   simTargetKm: 800,
   simAvgSpeedKmh: 80,
   simDriverMode: '1-Fahrer',

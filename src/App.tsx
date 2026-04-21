@@ -156,8 +156,8 @@ export default function App() {
         <div className="mt-6 bg-white rounded-xl border border-slate-200 p-6">
           <DrivingTimeline
             results={simResults}
-            driverMode={inputs.simDriverMode}
             targetKm={inputs.simTargetKm}
+            minSocPct={inputs.simMinSocPct}
           />
         </div>
 

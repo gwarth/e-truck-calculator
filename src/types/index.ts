@@ -1,5 +1,11 @@
 // ─── Vehicle Presets ────────────────────────────────────────────────────────
 
+/** Ein Abschnitt der Ladekurve: bis untilSocPct wird mit powerKw geladen */
+export interface ChargingCurveSegment {
+  untilSocPct: number   // bis zu diesem SOC gilt diese Leistung
+  powerKw: number
+}
+
 export interface ElectricTruckPreset {
   id: string
   name: string
@@ -11,6 +17,7 @@ export interface ElectricTruckPreset {
   maxChargingKw: number          // peak DC charging power
   chargingStandard: 'CCS2' | 'MCS'
   rangeKm: number                // realistic range (usable battery / consumption)
+  chargingCurve: ChargingCurveSegment[]  // reale Ladekurve in Phasen
 }
 
 export interface DieselTruckPreset {
@@ -139,26 +146,18 @@ export interface TCOResults {
 
 // ─── Driving Simulation ──────────────────────────────────────────────────────
 
-export interface ChargingStop {
-  timeH: number                   // Stunden ab Abfahrt
-  kmAtStop: number
-  durationMin: number
-  socBefore: number               // % SOC vor Laden
-  socAfter: number                // % SOC nach Laden
-  isMandatoryBreak: boolean       // fällt mit Pflichtpause zusammen?
-}
-
-export interface MandatoryBreak {
-  timeH: number
-  durationMin: number
-  type: '45min' | '11h-rest' | '9h-rest'
-}
-
-export interface SocDataPoint {
-  timeH: number
-  socPct: number
-  kmDriven: number
-  phase: 'driving' | 'charging' | 'break' | 'rest'
+/**
+ * Ein diskretes Zeitsegment der Tour.
+ * Alle SOC-Werte interpolieren linear zwischen startSoc und endSoc.
+ */
+export interface TimelineSegment {
+  startH: number
+  endH: number
+  type: 'driving' | 'charging' | 'break_idle' | 'extra_stop'
+  startSoc: number
+  endSoc: number
+  startKm: number
+  endKm: number
 }
 
 export interface SimResult {
@@ -166,11 +165,8 @@ export interface SimResult {
   vehicleName: string
   feasible: boolean
   totalTimeH: number
-  totalDrivingH: number
-  extraChargingStops: number      // Ladestopps die NICHT mit Pflichtpause zusammenfallen
-  extraChargingMinutes: number    // Gesamter Zeitverlust durch Extra-Stopps
-  chargingStops: ChargingStop[]
-  mandatoryBreaks: MandatoryBreak[]
-  socProfile: SocDataPoint[]
+  extraChargingStops: number
+  extraChargingMinutes: number
+  segments: TimelineSegment[]
   statusLabel: 'ok' | 'extra-stop' | 'not-feasible'
 }
