@@ -1,0 +1,105 @@
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  display: flex; flex-direction: column;
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #1d2430; background: #f3f5f8;
+}
+
+#topbar {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  padding: 8px 14px; background: #101828; color: #fff;
+}
+#brand { font-size: 17px; font-weight: 700; letter-spacing: .3px; }
+#brand .tag {
+  font-size: 11px; font-weight: 600; vertical-align: middle;
+  background: #2e4269; border-radius: 4px; padding: 2px 6px; margin-left: 6px;
+}
+#steps { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: #b6c2d6; }
+#steps .step b {
+  display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center;
+  background: #2e4269; color: #fff; border-radius: 50%; font-size: 11px; margin-right: 4px;
+}
+#steps .step.done b { background: #1f9d55; }
+#steps .sep { color: #55627a; }
+
+#layout { flex: 1; display: flex; min-height: 0; }
+
+#left {
+  width: 40%; min-width: 340px; max-width: 640px;
+  display: flex; flex-direction: column; border-right: 1px solid #d7dde6; background: #fff;
+}
+#planWrap { position: relative; flex: 1; min-height: 200px; background: #232a36; }
+#planCanvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; }
+#dropzone {
+  position: absolute; inset: 12px; display: flex; align-items: center; justify-content: center;
+  border: 2px dashed #5a6880; border-radius: 10px; color: #c6d0de;
+  text-align: center; cursor: pointer; user-select: none;
+}
+#dropzone.dragover { border-color: #6ea8fe; color: #fff; background: rgba(110,168,254,.08); }
+#dropzone.hidden { display: none; }
+
+#pairsPanel, #overlayPanel { border-top: 1px solid #e2e7ee; padding: 10px 12px; }
+.panel-head {
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 600; margin-bottom: 6px;
+}
+#pairsList { list-style: none; margin: 0; padding: 0; max-height: 140px; overflow-y: auto; }
+#pairsList li {
+  display: flex; align-items: center; gap: 8px; padding: 3px 2px; font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+#pairsList .badge {
+  width: 18px; height: 18px; line-height: 18px; border-radius: 50%;
+  color: #fff; font-size: 11px; font-weight: 700; text-align: center; flex: none;
+}
+#pairsList .coords { color: #56637a; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#pairsList .del {
+  border: none; background: none; color: #a0aabb; cursor: pointer; font-size: 15px; padding: 0 4px;
+}
+#pairsList .del:hover { color: #d33; }
+#pairsHint { font-size: 12px; color: #7a8598; margin-top: 6px; }
+kbd {
+  background: #eef1f5; border: 1px solid #ccd3dd; border-radius: 3px;
+  padding: 0 4px; font-size: 11px;
+}
+
+#overlayPanel .row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+#overlayPanel input[type="range"] { flex: 1; }
+#opacityVal { width: 42px; text-align: right; font-variant-numeric: tabular-nums; }
+button {
+  font: inherit; padding: 5px 12px; border: 1px solid #c6cfdb; border-radius: 6px;
+  background: #f7f9fc; cursor: pointer;
+}
+button:hover:not(:disabled) { background: #edf2f9; }
+button:disabled { opacity: .5; cursor: default; }
+button.ghost { border: none; background: none; color: #6b7688; font-size: 12px; padding: 2px 4px; }
+button.ghost:hover { color: #d33; background: none; }
+
+#right { flex: 1; position: relative; min-width: 0; }
+#map { position: absolute; inset: 0; }
+#searchBox { position: absolute; top: 10px; left: 10px; z-index: 5; }
+#searchInput {
+  width: 300px; max-width: 60vw; padding: 7px 11px; font: inherit;
+  border: 1px solid #b9c2cf; border-radius: 7px; background: #fff;
+  box-shadow: 0 1px 4px rgba(16,24,40,.18);
+}
+
+#statusbar {
+  padding: 6px 14px; background: #101828; color: #cfd8e6; font-size: 12.5px; min-height: 28px;
+}
+#status.warn { color: #ffc84d; }
+#status.err { color: #ff8080; }
+
+.map-pt {
+  width: 20px; height: 20px; line-height: 20px; border-radius: 50%;
+  color: #fff; font-size: 11px; font-weight: 700; text-align: center;
+  border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.45); cursor: grab;
+}
+.map-pt.pending { background: #666; opacity: .85; }
+
+@media (max-width: 860px) {
+  #layout { flex-direction: column; }
+  #left { width: 100%; max-width: none; border-right: none; border-bottom: 1px solid #d7dde6; }
+  #planWrap { min-height: 260px; }
+}

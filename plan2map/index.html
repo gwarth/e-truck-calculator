@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>plan2map – Übersichtsplan auf OpenStreetMap</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="topbar">
+    <div id="brand">plan2map <span class="tag">Prototyp</span></div>
+    <div id="steps">
+      <span class="step" id="step1"><b>1</b> Foto des Plans laden</span>
+      <span class="sep">→</span>
+      <span class="step" id="step2"><b>2</b> Punktpaare setzen (Plan ↔ Karte, min. 3, besser 5–8)</span>
+      <span class="sep">→</span>
+      <span class="step" id="step3"><b>3</b> Overlay erscheint automatisch</span>
+    </div>
+  </header>
+
+  <main id="layout">
+    <section id="left">
+      <div id="planWrap">
+        <canvas id="planCanvas"></canvas>
+        <div id="dropzone">
+          <div>
+            <strong>Foto des Übersichtsplans</strong><br>
+            hierher ziehen oder klicken zum Auswählen
+          </div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" hidden>
+      </div>
+
+      <div id="pairsPanel">
+        <div class="panel-head">
+          <span>Punktpaare</span>
+          <button id="clearBtn" class="ghost" title="Bild und alle Punkte verwerfen">Zurücksetzen</button>
+        </div>
+        <ul id="pairsList"></ul>
+        <div id="pairsHint">Einen markanten Punkt im Plan anklicken (Kreuzung, Poolecke, Gebäude&shy;kante) und danach denselben Punkt auf der Karte – oder umgekehrt. <kbd>Esc</kbd> bricht einen offenen Punkt ab. Karten&shy;marker sind nachträglich verschiebbar.</div>
+      </div>
+
+      <div id="overlayPanel">
+        <div class="panel-head"><span>Overlay</span></div>
+        <label class="row">
+          <input type="checkbox" id="overlayVisible" checked>
+          <span>anzeigen</span>
+        </label>
+        <label class="row">
+          <span>Deckkraft</span>
+          <input type="range" id="opacity" min="0" max="100" value="70">
+          <span id="opacityVal">70&nbsp;%</span>
+        </label>
+        <button id="fitOverlayBtn" disabled>Auf Overlay zoomen</button>
+      </div>
+    </section>
+
+    <section id="right">
+      <div id="map"></div>
+      <div id="searchBox">
+        <input type="search" id="searchInput" placeholder="Ort suchen (z. B. Camping Bella Italia) – Enter">
+      </div>
+    </section>
+  </main>
+
+  <footer id="statusbar"><span id="status">Foto eines Übersichtsplans laden, um zu starten.</span></footer>
+
+  <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+  <script src="js/tps.js"></script>
+  <script src="js/planviewer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
